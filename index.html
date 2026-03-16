@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenIM Web Client</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <!-- Cocos Creator 2.4.7 环境模拟 -->
+  <script src="/src/cocos/cocos-2.4.7-shim.js"></script>
+  <!-- WASM support -->
+  <script src="/wasm_exec.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 登录页面 -->
+    <div id="login-page" class="page">
+      <div class="login-container">
+        <div class="login-header">
+          <h1>OpenIM Web Client</h1>
+          <p class="subtitle">简单易用的即时通讯客户端</p>
+        </div>
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="server-url">服务器地址</label>
+            <input type="text" id="server-url" placeholder="http://your-server:10002" required>
+          </div>
+          <div class="form-group">
+            <label for="ws-url">WebSocket 地址</label>
+            <input type="text" id="ws-url" placeholder="ws://your-server:10001" required>
+          </div>
+          <div class="form-group">
+            <label for="user-id">用户 ID</label>
+            <input type="text" id="user-id" placeholder="请输入用户 ID" required>
+          </div>
+          <div class="form-group">
+            <label for="user-token">用户 Token</label>
+            <input type="password" id="user-token" placeholder="请输入用户 Token" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">
+            <span class="btn-text">登录</span>
+            <span class="btn-loading" style="display: none;">登录中...</span>
+          </button>
+          <div id="login-error" class="error-message" style="display: none;"></div>
+        </form>
+        <div class="login-tips">
+          <p>提示：请确保服务器地址和 WebSocket 地址正确</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主聊天页面 -->
+    <div id="chat-page" class="page" style="display: none;">
+      <div class="chat-layout">
+        <!-- 侧边栏 - 会话列表 -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="user-info">
+              <div class="user-avatar">
+                <span id="current-user-avatar">U</span>
+              </div>
+              <div class="user-details">
+                <div class="user-name" id="current-user-name">用户</div>
+                <div class="connection-status" id="connection-status">
+                  <span class="status-dot"></span>
+                  <span class="status-text">连接中</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-icon" id="logout-btn" title="退出登录">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Tab 切换 -->
+          <div class="sidebar-tabs">
+            <button class="tab-btn active" data-tab="conversations">会话</button>
+            <button class="tab-btn" data-tab="groups">群组</button>
+          </div>
+
+          <div class="sidebar-search">
+            <input type="text" id="conversation-search" placeholder="搜索会话...">
+          </div>
+
+          <!-- 会话列表 -->
+          <div class="conversation-list" id="conversation-list">
+            <div class="empty-state">
+              <p>暂无会话</p>
+            </div>
+          </div>
+
+          <!-- 群组列表 (默认隐藏) -->
+          <div class="group-list" id="group-list" style="display: none;">
+            <div class="empty-state">
+              <p>暂无群组</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- 聊天区域 -->
+        <main class="chat-main">
+          <div id="no-conversation" class="no-conversation">
+            <div class="empty-state">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <p>选择一个会话开始聊天</p>
+            </div>
+          </div>
+
+          <div id="conversation-view" class="conversation-view" style="display: none;">
+            <div class="chat-header">
+              <div class="chat-info">
+                <div class="chat-avatar" id="chat-avatar">
+                  <span id="chat-avatar-text">?</span>
+                </div>
+                <div class="chat-details">
+                  <div class="chat-name" id="chat-name">会话名称</div>
+                  <div class="chat-status" id="chat-status"></div>
+                </div>
+              </div>
+              <div class="chat-actions">
+                <button class="btn-icon" id="clear-history-btn" title="清空聊天记录">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <div class="loading-state" id="messages-loading">
+                <p>加载消息中...</p>
+              </div>
+            </div>
+
+            <div class="chat-input-area">
+              <div class="input-wrapper">
+                <textarea
+                  id="message-input"
+                  placeholder="输入消息..."
+                  rows="1"
+                  maxlength="2000"></textarea>
+                <button class="btn-send" id="send-btn" title="发送">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast" style="display: none;">
+      <span id="toast-message"></span>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirm-dialog" class="dialog-overlay" style="display: none;">
+      <div class="dialog">
+        <div class="dialog-header">
+          <h3 id="confirm-title">确认</h3>
+        </div>
+        <div class="dialog-body">
+          <p id="confirm-message">确定要执行此操作吗？</p>
+        </div>
+        <div class="dialog-footer">
+          <button class="btn btn-secondary" id="confirm-cancel">取消</button>
+          <button class="btn btn-primary" id="confirm-ok">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
