@@ -38,6 +38,13 @@ function detectPlatform() {
     if (Capacitor.getPlatform() === 'ios') return Platform.iOS
   }
 
+  // 检测 Cocos 环境
+  if (typeof window !== 'undefined' && window.cc && window.cc.sys) {
+    const sys = window.cc.sys
+    if (sys.platform === sys.ANDROID) return Platform.Android
+    if (sys.platform === sys.IOS) return Platform.iOS
+  }
+
   // 通过 UserAgent 检测（作为后备方案）
   if (typeof navigator !== 'undefined') {
     const userAgent = navigator.userAgent || ''
