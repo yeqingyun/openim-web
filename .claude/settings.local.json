@@ -55,7 +55,8 @@
       "Bash(git push)",
       "Bash(git commit -m \"Add FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 environment variable\")",
       "Bash(git commit -m \"Update Java version to 21 for Capacitor Android\")",
-      "Bash(git commit -m \"Add mobile responsive design for Android\")"
+      "Bash(git commit -m \"Add mobile responsive design for Android\")",
+      "Bash(git commit -m \"Fix mobile layout - use page switch instead of sidebar slide\")"
     ]
   }
 }

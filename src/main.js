@@ -98,7 +98,7 @@ class App {
 
     // 侧边栏
     this.elements.sidebar = document.querySelector('.sidebar')
-    this.elements.sidebarOverlay = document.getElementById('sidebar-overlay')
+    this.elements.chatMain = document.querySelector('.chat-main')
     this.elements.conversationList = document.getElementById('conversation-list')
     this.elements.groupList = document.getElementById('group-list')
     this.elements.conversationSearch = document.getElementById('conversation-search')
@@ -205,11 +205,6 @@ class App {
     // 移动端 - 返回按钮
     this.elements.backBtn.addEventListener('click', () => {
       this._openSidebar()
-    })
-
-    // 移动端 - 遮罩层点击关闭侧边栏
-    this.elements.sidebarOverlay.addEventListener('click', () => {
-      this._closeSidebar()
     })
   }
 
@@ -827,6 +822,10 @@ class App {
   _showChatPage() {
     this.elements.loginPage.style.display = 'none'
     this.elements.chatPage.style.display = 'block'
+    // 移动端初始显示会话列表
+    if (this._isMobile()) {
+      this.elements.chatMain.classList.remove('active')
+    }
   }
 
   /**
@@ -1261,20 +1260,18 @@ class App {
   }
 
   /**
-   * 打开侧边栏（移动端）
+   * 打开侧边栏（移动端）- 显示会话列表
    */
   _openSidebar() {
-    this.elements.sidebar.classList.add('open')
-    this.elements.sidebarOverlay.classList.add('show')
+    this.elements.chatMain.classList.remove('active')
   }
 
   /**
-   * 关闭侧边栏（移动端）
+   * 关闭侧边栏（移动端）- 显示聊天区域
    */
   _closeSidebar() {
     if (this._isMobile()) {
-      this.elements.sidebar.classList.remove('open')
-      this.elements.sidebarOverlay.classList.remove('show')
+      this.elements.chatMain.classList.add('active')
     }
   }
 
