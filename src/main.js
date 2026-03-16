@@ -97,6 +97,8 @@ class App {
     this.elements.loginError = document.getElementById('login-error')
 
     // 侧边栏
+    this.elements.sidebar = document.querySelector('.sidebar')
+    this.elements.sidebarOverlay = document.getElementById('sidebar-overlay')
     this.elements.conversationList = document.getElementById('conversation-list')
     this.elements.groupList = document.getElementById('group-list')
     this.elements.conversationSearch = document.getElementById('conversation-search')
@@ -104,6 +106,7 @@ class App {
     this.elements.currentUserName = document.getElementById('current-user-name')
     this.elements.connectionStatus = document.getElementById('connection-status')
     this.elements.logoutBtn = document.getElementById('logout-btn')
+    this.elements.backBtn = document.getElementById('back-btn')
 
     // Tab 相关状态
     this.state.currentTab = 'conversations' // 'conversations' or 'groups'
@@ -197,6 +200,16 @@ class App {
       if (e.target === this.elements.confirmDialog) {
         this._hideConfirmDialog()
       }
+    })
+
+    // 移动端 - 返回按钮
+    this.elements.backBtn.addEventListener('click', () => {
+      this._openSidebar()
+    })
+
+    // 移动端 - 遮罩层点击关闭侧边栏
+    this.elements.sidebarOverlay.addEventListener('click', () => {
+      this._closeSidebar()
     })
   }
 
@@ -542,6 +555,9 @@ class App {
     // 显示聊天区域
     this.elements.noConversation.style.display = 'none'
     this.elements.conversationView.style.display = 'flex'
+
+    // 移动端：关闭侧边栏
+    this._closeSidebar()
 
     // 标记已读
     conversationManager.markConversationRead(conversationID)
@@ -1127,6 +1143,9 @@ class App {
     this.elements.noConversation.style.display = 'none'
     this.elements.conversationView.style.display = 'flex'
 
+    // 移动端：关闭侧边栏
+    this._closeSidebar()
+
     // 尝试加载群组会话的消息
     await this._loadMessages(conversationID)
   }
@@ -1239,6 +1258,31 @@ class App {
     } catch (error) {
       console.error('Failed to clear login cache:', error)
     }
+  }
+
+  /**
+   * 打开侧边栏（移动端）
+   */
+  _openSidebar() {
+    this.elements.sidebar.classList.add('open')
+    this.elements.sidebarOverlay.classList.add('show')
+  }
+
+  /**
+   * 关闭侧边栏（移动端）
+   */
+  _closeSidebar() {
+    if (this._isMobile()) {
+      this.elements.sidebar.classList.remove('open')
+      this.elements.sidebarOverlay.classList.remove('show')
+    }
+  }
+
+  /**
+   * 检测是否为移动设备
+   */
+  _isMobile() {
+    return window.innerWidth <= 768
   }
 }
 

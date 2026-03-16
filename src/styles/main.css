@@ -913,21 +913,52 @@ body {
 /* ==================== 响应式设计 ==================== */
 @media (max-width: 768px) {
   .sidebar {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    z-index: 100;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 200;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar.open {
     transform: translateX(0);
   }
 
+  /* 遮罩层 */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
   .chat-main {
     width: 100%;
+  }
+
+  /* 返回按钮 - 移动端显示 */
+  .back-btn {
+    display: flex !important;
+  }
+
+  .chat-header {
+    gap: 8px;
   }
 
   .login-container {
@@ -935,8 +966,48 @@ body {
     padding: 32px 24px;
   }
 
+  .login-header h1 {
+    font-size: 24px;
+  }
+
   .message-bubble-content {
     max-width: 75%;
+  }
+
+  /* 调整消息区域内边距 */
+  .chat-messages {
+    padding: 12px;
+  }
+
+  /* 调整对话框宽度 */
+  .dialog {
+    width: 95%;
+    max-width: 350px;
+  }
+
+  /* 调整输入区域 */
+  .chat-input-area {
+    padding: 10px 12px;
+  }
+
+  #message-input {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
+}
+
+/* 桌面端隐藏返回按钮 */
+.back-btn {
+  display: none;
+}
+
+/* 移动端默认显示侧边栏，选择会话后隐藏 */
+@media (max-width: 768px) {
+  .chat-main.has-conversation {
+    display: flex;
+  }
+
+  .sidebar:not(.open) {
+    transform: translateX(-100%);
   }
 }
 

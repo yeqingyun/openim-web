@@ -54,7 +54,8 @@
       "Bash(git commit -m \"Update Node.js version to 22 for GitHub Actions compatibility\")",
       "Bash(git push)",
       "Bash(git commit -m \"Add FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 environment variable\")",
-      "Bash(git commit -m \"Update Java version to 21 for Capacitor Android\")"
+      "Bash(git commit -m \"Update Java version to 21 for Capacitor Android\")",
+      "Bash(git commit -m \"Add mobile responsive design for Android\")"
     ]
   }
 }
