@@ -50,7 +50,8 @@
       "Bash(dir /s /b nul)",
       "Bash(dir /s /b)",
       "Bash(findstr /i \"nul\")",
-      "Bash(git commit -m \"Add GitHub Actions workflow for Android APK build\")"
+      "Bash(git commit -m \"Add GitHub Actions workflow for Android APK build\")",
+      "Bash(git commit -m \"Update Node.js version to 22 for GitHub Actions compatibility\")"
     ]
   }
 }
